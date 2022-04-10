@@ -73,6 +73,8 @@ tasks:
     before: cd /workspace/V2RayCloudSpider/src
     command: |
       gp sync-await Scaffold_Install
+      sleep 30
+      gp sync-await Scaffold_Server
       python3 main.py pool
       python main.py pool --decouple
       python main.py pool --overdue
@@ -80,29 +82,33 @@ tasks:
   # ## 系统任务
   # ### scaffold deploy   ---   部署定时任务节点
   - name: Scaffold Deploy
-    before: python3 src/main.py entropy --update
+    before: cd /workspace/V2RayCloudSpider/src
     command: |
       gp sync-await Scaffold_Install
-      python3 src/main.py deploy --collector --decoupler
+      python main.py entropy --update
+      python main.py deploy --collector --decoupler
   # ### scaffold synergy  ---   部署协同工作节点
   - name: Scaffold Synergy
+    before: cd /workspace/V2RayCloudSpider/src
     command: |
       gp sync-await Scaffold_Install
-      python3 src/main.py synergy
+      python main.py synergy
   # ✅### scaffold server   ---   部署 PRODUCTION 接口服务器
   - name: Scaffold Server
     before: cd /workspace/V2RayCloudSpider/src
     command: |
       gp sync-await Scaffold_Install
       python3 main.py server --host=0.0.0.0 --port=22333 --debug --fast
-      gp sync-done Scaffold_Server
 
   # ### scaffold entropy  ---   采集队列的命令行管理工具。功能包括：更新待办任务、更新采集队列容量，检查待办任务心跳，输出采集队列摘要信息。
   - name: Scaffold Entropy
     before: cd /workspace/V2RayCloudSpider/src
     command: |
-      gp sync-await Scaffold_Server
+      gp sync-await Scaffold_Install
+      sleep 15
+      gp sync-done Scaffold_Server
       python3 main.py entropy
+      python main.py entropy --remote
       python main.py entropy --cap=27
       python main.py entropy --update
       python main.py entropy --check
