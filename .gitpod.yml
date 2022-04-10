@@ -36,9 +36,9 @@ tasks:
       redis-cli
   - name: Terminal envs_redis-tools
     command: |
-      cd /workspace/V2RayCloudSpider/src/database/redis
       gp sync-await envs_redis
-      sleep 60
+      sleep 180
+      cd /workspace/V2RayCloudSpider/src/database/redis
       pip install rdbtools python-lzf
       rdb --command json dump.rdb > data_all.json
       rdb --command justkeyvals --key "v2rss:subscribe:v2ray" dump.rdb > data_subscribe.txt
