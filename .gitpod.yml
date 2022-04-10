@@ -20,11 +20,11 @@ tasks:
     command: |
       google-chrome --version
       ffmpeg -version
-  - name: Terminal envs redis
-    init: docker run -itd -v /workspace/V2RayCloudSpider/:/data --name redis-test -p 6379:6379 redis
-    command: |
-      docker ps
-      docker exec -it redis-test /bin/bash
+#   - name: Terminal envs redis
+#     init: docker run -itd -v /workspace/V2RayCloudSpider/:/data --name redis-test -p 6379:6379 redis
+#     command: |
+#       docker ps
+#       docker exec -it redis-test /bin/bash
 
   # - name: Terminal run init
   #   before: python3 src/main.py install
