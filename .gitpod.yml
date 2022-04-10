@@ -15,9 +15,9 @@ tasks:
     before: sudo apt-get update
     command: |
       gp sync-await envs_init
-      sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+      wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
       sudo apt install ./google-chrome-stable_current_amd64.deb -y
-      sudo rm ./google-chrome-stable_current_amd64.deb
+      rm ./google-chrome-stable_current_amd64.deb
       sudo apt install ffmpeg -y
       gp sync-done envs_apt
       google-chrome --version
@@ -25,7 +25,11 @@ tasks:
   - name: Terminal envs_redis
     command: |
       gp sync-await envs_apt
-      docker run -itd -v /workspace/V2RayCloudSpider/:/data --name redis-test -p 6379:6379 redis
+      sudo mkdir -vp /workspace/V2RayCloudSpider/src/database/redis
+      sudo chmod -R 777 /workspace/V2RayCloudSpider/src/database
+      docker run -itd -v /workspace/V2RayCloudSpider/src/database/redis:/data --name redis-test -p 6379:6379 redis
+      sudo cp /workspace/V2RayCloudSpider/src/config-sample.yaml /workspace/V2RayCloudSpider/src/config.yaml
+      sudo chmod 777 /workspace/V2RayCloudSpider/src/config.yaml
       gp sync-done envs_redis
       docker ps
       docker exec -it redis-test /bin/bash
@@ -143,5 +147,5 @@ ports:
     onOpen: open-browser
     visibility: public
   - port: 6379
-    onOpen: open-preview
+    onOpen: ignore
     visibility: public
