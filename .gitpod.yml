@@ -5,30 +5,28 @@
 tasks:
   - name: Terminal envs_init
     before: sudo cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-    init: |
-      sudo apt-get update
+    command: |
+      sudo apt-get update -y
       python3 -m pip install --upgrade pip
       pip install -r requirements.txt
       gp sync-done envs_init
-    command: date
+      date
   - name: Terminal envs_apt
     before: sudo apt-get update
-    init: |
+    command: |
       gp sync-await envs_init
       sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
       sudo apt install ./google-chrome-stable_current_amd64.deb -y
       sudo rm ./google-chrome-stable_current_amd64.deb
       sudo apt install ffmpeg -y
       gp sync-done envs_apt
-    command: |
       google-chrome --version
       ffmpeg -version
   - name: Terminal envs_redis
-    init: |
+    command: |
       gp sync-await envs_apt
       docker run -itd -v /workspace/V2RayCloudSpider/:/data --name redis-test -p 6379:6379 redis
       gp sync-done envs_redis
-    command: |
       docker ps
       docker exec -it redis-test /bin/bash
 
@@ -142,4 +140,8 @@ tasks:
 
 ports:
   - port: 22333
+    onOpen: open-browser
+    visibility: public
+  - port: 6379
     onOpen: open-preview
+    visibility: public
