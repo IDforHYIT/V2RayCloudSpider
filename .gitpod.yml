@@ -20,28 +20,30 @@ tasks:
       gp sync-done envs_apt
       ffmpeg -version
       google-chrome --version
-  # - name: Terminal envs_apt
-  #   before: sudo apt-get update
-  #   command: |
-  #     gp sync-await envs_init
-  #     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  #     sudo apt install ./google-chrome-stable_current_amd64.deb -y
-  #     rm ./google-chrome-stable_current_amd64.deb
-  #     sudo apt install ffmpeg -y
-  #     gp sync-done envs_apt
-  #     ffmpeg -version
-  #     google-chrome --version
   - name: Terminal envs_redis
     command: |
       gp sync-await envs_apt
       sudo mkdir -vp /workspace/V2RayCloudSpider/src/database/redis
       sudo chmod -R 777 /workspace/V2RayCloudSpider/src/database
       docker run -itd -v /workspace/V2RayCloudSpider/src/database/redis:/data --name redis-test -p 6379:6379 redis
+      docker start redis-test
+      docker ps -a
       sudo cp /workspace/V2RayCloudSpider/src/config-sample.yaml /workspace/V2RayCloudSpider/src/config.yaml
       sudo chmod 777 /workspace/V2RayCloudSpider/src/config.yaml
       gp sync-done envs_redis
-      docker ps
+      docker ps -a
       docker exec -it redis-test /bin/bash
+      redis-cli
+  - name: Terminal envs_redis-tools
+    before: cd /workspace/V2RayCloudSpider/src/database/redis
+    command: |
+      gp sync-await envs_redis
+      sleep 60
+      pip install rdbtools python-lzf
+      rdb --command json dump.rdb > data_all.json
+      rdb --command justkeyvals --key "v2rss:subscribe:v2ray" dump.rdb > data_subscribe.txt
+      rdb --command justkeyvals --key "v2rss:detach" dump.rdb > data_used.txt
+      
 
   # - name: Terminal run init
   #   before: python3 src/main.py install
@@ -82,7 +84,7 @@ tasks:
     before: cd /workspace/V2RayCloudSpider/src
     command: |
       gp sync-await Scaffold_Install
-      sleep 30
+      sleep 60
       gp sync-await Scaffold_Server
       python3 main.py pool
       python main.py pool --decouple
