@@ -11,10 +11,11 @@ tasks:
     before: python3 -m pip install --upgrade pip
     init: pip install -r requirements.txt
   - name: Terminal envs apt
-    before: wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    before: sudo apt-get update
     init: |
+      sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
       sudo apt install ./google-chrome-stable_current_amd64.deb -y
-      rm ./google-chrome-stable_current_amd64.deb
+      sudo rm ./google-chrome-stable_current_amd64.deb
       sudo apt install ffmpeg -y
     command: |
       google-chrome --version
@@ -25,92 +26,92 @@ tasks:
       docker ps
       docker exec -it redis-test /bin/bash
 
-  - name: Terminal run init
-    before: python3 src/main.py install
-    init: python3 src/main.py install
-    command: python3 src/main.py ping
-  - name: Terminal run test
-    before: python3 src/main.py ping
-    init: |
-      python3 src/main.py entropy --update
-      python3 src/main.py entropy --cap=27
-      python3 src/main.py entropy --check
-    command: python3 examples/atomic_go.py
+  # - name: Terminal run init
+  #   before: python3 src/main.py install
+  #   init: python3 src/main.py install
+  #   command: python3 src/main.py ping
+  # - name: Terminal run test
+  #   before: python3 src/main.py ping
+  #   init: |
+  #     python3 src/main.py entropy --update
+  #     python3 src/main.py entropy --cap=27
+  #     python3 src/main.py entropy --check
+  #   command: python3 examples/atomic_go.py
 
 
-  # ###### BEGIN ###### #
+  # # ###### BEGIN ###### #
 
-  # # V2RSS 脚手架指令  https://blog.echosec.top/v2rss-docs/zh/docs/player/cli/overview/
+  # # # V2RSS 脚手架指令  https://blog.echosec.top/v2rss-docs/zh/docs/player/cli/overview/
 
-  # ## 基础指令
-  # ### scaffold ping     ---   测试 Redis 数据库连接
-  - name: Scaffold Ping
-    before: cd /workspace/V2RayCloudSpider/src
-    command: python3 main.py ping
-  # ✅### scaffold install  ---   在 Ubuntu 中构建基础运行环境
-  - name: Scaffold Build
-    before: cd /workspace/V2RayCloudSpider/src
-    command: python3 main.py install
+  # # ## 基础指令
+  # # ### scaffold ping     ---   测试 Redis 数据库连接
+  # - name: Scaffold Ping
+  #   before: cd /workspace/V2RayCloudSpider/src
+  #   command: python3 main.py ping
+  # # ✅### scaffold install  ---   在 Ubuntu 中构建基础运行环境
+  # - name: Scaffold Build
+  #   before: cd /workspace/V2RayCloudSpider/src
+  #   command: python3 main.py install
 
-  # ## 订阅管理
-  # ### scaffold pool     ---   订阅池的命令行管理工具。功能包括：剔除 alive_pool 中的失效订阅或过期订阅，输出订阅池状态等。 ( localhost:22333/api/v2rss/status )
-  - name: Scaffold Pool
-    before: cd /workspace/V2RayCloudSpider/src
-    command: |
-      python3 main.py pool
-      python main.py pool --decouple
-      python main.py pool --overdue
+  # # ## 订阅管理
+  # # ### scaffold pool     ---   订阅池的命令行管理工具。功能包括：剔除 alive_pool 中的失效订阅或过期订阅，输出订阅池状态等。 ( localhost:22333/api/v2rss/status )
+  # - name: Scaffold Pool
+  #   before: cd /workspace/V2RayCloudSpider/src
+  #   command: |
+  #     python3 main.py pool
+  #     python main.py pool --decouple
+  #     python main.py pool --overdue
 
-  # ## 系统任务
-  # ### scaffold deploy   ---   部署定时任务节点
-  - name: Scaffold Deploy
-    before: python3 src/main.py entropy --update
-    command: python3 src/main.py deploy --collector --decoupler
-  # ### scaffold synergy  ---   部署协同工作节点
-  - name: Scaffold Synergy
-    command: python3 src/main.py synergy
-  # ✅### scaffold server   ---   部署 PRODUCTION 接口服务器
-  - name: Scaffold Server
-    before: cd /workspace/V2RayCloudSpider/src
-    command: python3 main.py server --host=0.0.0.0 --port=22333 --debug --fast
-  # ### scaffold entropy  ---   采集队列的命令行管理工具。功能包括：更新待办任务、更新采集队列容量，检查待办任务心跳，输出采集队列摘要信息。
-  - name: Scaffold Entropy
-    before: cd /workspace/V2RayCloudSpider/src
-    command: |
-      python3 main.py entropy
-      python main.py entropy --cap=27
-      python main.py entropy --update
-      python main.py entropy --check
+  # # ## 系统任务
+  # # ### scaffold deploy   ---   部署定时任务节点
+  # - name: Scaffold Deploy
+  #   before: python3 src/main.py entropy --update
+  #   command: python3 src/main.py deploy --collector --decoupler
+  # # ### scaffold synergy  ---   部署协同工作节点
+  # - name: Scaffold Synergy
+  #   command: python3 src/main.py synergy
+  # # ✅### scaffold server   ---   部署 PRODUCTION 接口服务器
+  # - name: Scaffold Server
+  #   before: cd /workspace/V2RayCloudSpider/src
+  #   command: python3 main.py server --host=0.0.0.0 --port=22333 --debug --fast
+  # # ### scaffold entropy  ---   采集队列的命令行管理工具。功能包括：更新待办任务、更新采集队列容量，检查待办任务心跳，输出采集队列摘要信息。
+  # - name: Scaffold Entropy
+  #   before: cd /workspace/V2RayCloudSpider/src
+  #   command: |
+  #     python3 main.py entropy
+  #     python main.py entropy --cap=27
+  #     python main.py entropy --update
+  #     python main.py entropy --check
 
-  # ## 高级指令
-  # ### scaffold mining   ---   采集、清洗、分类、存储暴露在公网上的 SSPanel-Uim 站点
-  - name: Scaffold Mining
-    before: cd /workspace/V2RayCloudSpider/src
-    command: |
-      python main.py mining --power=64
-      python main.py mining --classifier --source=remote --batch=7
-      python main.py mining --collector
-  # ✅### scaffold spawn    ---   释放所有本机采集实例，基于 gevent 并发执行
-  - name: Scaffold Spawn
-    before: cd /workspace/V2RayCloudSpider/src
-    command: |
-      python main.py spawn --power=64 --remote
+  # # ## 高级指令
+  # # ### scaffold mining   ---   采集、清洗、分类、存储暴露在公网上的 SSPanel-Uim 站点
+  # - name: Scaffold Mining
+  #   before: cd /workspace/V2RayCloudSpider/src
+  #   command: |
+  #     python main.py mining --power=64
+  #     python main.py mining --classifier --source=remote --batch=7
+  #     python main.py mining --collector
+  # # ✅### scaffold spawn    ---   释放所有本机采集实例，基于 gevent 并发执行
+  # - name: Scaffold Spawn
+  #   before: cd /workspace/V2RayCloudSpider/src
+  #   command: |
+  #     python main.py spawn --power=64 --remote
 
-  # ## 实验功能
-  # ### scaffold ash      ---   通过设定的 threshold 审查订阅池，清洗出各类订阅中的优质节点，重新排列组合生成可被 Clash 吸收的规则的 config.yaml ；自动打开 Clash 导入配置文件。
-  - name: Scaffold Ash
-    before: cd /workspace/V2RayCloudSpider/src
-    command: python main.py ash
+  # # ## 实验功能
+  # # ### scaffold ash      ---   通过设定的 threshold 审查订阅池，清洗出各类订阅中的优质节点，重新排列组合生成可被 Clash 吸收的规则的 config.yaml ；自动打开 Clash 导入配置文件。
+  # - name: Scaffold Ash
+  #   before: cd /workspace/V2RayCloudSpider/src
+  #   command: python main.py ash
 
-  # ###### END ###### #
+  # # ###### END ###### #
 
 
-  - name: Terminal curl server
-    command: |
-      curl localhost:22333/api/v2rss/status
-      curl localhost:22333/api/v2rss/get/v2ray
-      curl localhost:22333/api/v2rss/get_subs/v1
-      curl localhost:22333/api/v2rss/get_subs/v2
+  # - name: Terminal curl server
+  #   command: |
+  #     curl localhost:22333/api/v2rss/status
+  #     curl localhost:22333/api/v2rss/get/v2ray
+  #     curl localhost:22333/api/v2rss/get_subs/v1
+  #     curl localhost:22333/api/v2rss/get_subs/v2
 
 ports:
   - port: 22333
