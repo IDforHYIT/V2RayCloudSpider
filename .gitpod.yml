@@ -9,19 +9,28 @@ tasks:
       sudo apt-get update -y
       python3 -m pip install --upgrade pip
       pip install -r requirements.txt
+      sudo apt-get update
       gp sync-done envs_init
       date
-  - name: Terminal envs_apt
-    before: sudo apt-get update
-    command: |
       gp sync-await envs_init
       wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
       sudo apt install ./google-chrome-stable_current_amd64.deb -y
-      rm ./google-chrome-stable_current_amd64.deb
+      rm ./google-chrome-stable_current*
       sudo apt install ffmpeg -y
       gp sync-done envs_apt
-      google-chrome --version
       ffmpeg -version
+      google-chrome --version
+  # - name: Terminal envs_apt
+  #   before: sudo apt-get update
+  #   command: |
+  #     gp sync-await envs_init
+  #     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  #     sudo apt install ./google-chrome-stable_current_amd64.deb -y
+  #     rm ./google-chrome-stable_current_amd64.deb
+  #     sudo apt install ffmpeg -y
+  #     gp sync-done envs_apt
+  #     ffmpeg -version
+  #     google-chrome --version
   - name: Terminal envs_redis
     command: |
       gp sync-await envs_apt
