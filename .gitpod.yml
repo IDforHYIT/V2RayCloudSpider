@@ -10,18 +10,21 @@ tasks:
   - name: Terminal envs pip
     before: python3 -m pip install --upgrade pip
     init: pip install -r requirements.txt
-  - name: Terminal envs google-chrome
+  - name: Terminal envs apt
     before: wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     init: |
-      sudo apt install ./google-chrome-stable_current_amd64.deb
+      sudo apt install ./google-chrome-stable_current_amd64.deb -y
       rm ./google-chrome-stable_current_amd64.deb
-    command: google-chrome --version
+      sudo apt install ffmpeg -y
+    command: |
+      google-chrome --version
+      ffmpeg -version
   - name: Terminal envs redis
-    init: docker run -itd --name redis-test -p 6379:6379 redis
-    command: docker ps
-  - name: Terminal envs ffmpeg
-    init: sudo apt install ffmpeg
-    command: ffmpeg -version
+    before: mkdir -vp dockerfiles/redis
+    init: docker run -itd -v /workspace/V2RayCloudSpider/dockerfiles:/data --name redis-test -p 6379:6379 redis
+    command: |
+      docker ps
+      docker exec -it redis-test /bin/bash
 
   - name: Terminal run init
     before: python3 src/main.py install
