@@ -35,8 +35,8 @@ tasks:
       docker exec -it redis-test /bin/bash
       redis-cli
   - name: Terminal envs_redis-tools
-    before: cd /workspace/V2RayCloudSpider/src/database/redis
     command: |
+      cd /workspace/V2RayCloudSpider/src/database/redis
       gp sync-await envs_redis
       sleep 60
       pip install rdbtools python-lzf
@@ -154,6 +154,7 @@ tasks:
   - name: Terminal curl server
     command: |
       gp sync-await Scaffold_Server
+      sleep 60
       curl localhost:22333/api/v2rss/status
       curl localhost:22333/api/v2rss/get/v2ray
       curl localhost:22333/api/v2rss/get_subs/v1
